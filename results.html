@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Прогнозы малыша 📊</title>
+
+  <style>
+    :root {
+      --bg: #fdf6ee;
+      --card: #ffffff;
+      --text: #2b2b2b;
+      --sub: #9a918c;
+      --accent: #2b2b2b;
+      --border: #ecdfd3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 48px;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(253,246,238,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left h1 {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .header-left .subtitle {
+      font-size: 12px;
+      color: var(--sub);
+      margin-top: 2px;
+    }
+
+    .count-badge {
+      background: var(--accent);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 99px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .count-badge.show { opacity: 1; }
+
+    /* Container */
+    .container { padding: 16px 16px 0; max-width: 600px; margin: 0 auto; }
+
+    /* Config bar */
+    .config-bar {
+      background: #fffaf4;
+      border: 1.5px solid #f0d9bb;
+      border-radius: 18px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .config-bar b { display: block; font-size: 15px; margin-bottom: 4px; }
+    .config-bar small { font-size: 13px; color: var(--sub); }
+
+    .config-bar input {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      font-size: 14px;
+      background: var(--bg);
+      font-family: inherit;
+      margin-top: 10px;
+      color: var(--text);
+    }
+
+    .config-bar input:focus { outline: none; border-color: #c8b9a8; background: #fff; }
+
+    .config-bar button {
+      margin-top: 10px;
+      padding: 11px 22px;
+      border: none;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Summary */
+    .summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+      animation: fadeUp 0.4s 0.05s ease both;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+    }
+
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .stat-value { font-size: 40px; font-weight: 800; line-height: 1; }
+
+    .bar-row { margin-top: 2px; }
+    .bar-item { margin-bottom: 8px; }
+    .bar-item:last-child { margin-bottom: 0; }
+    .bar-meta { font-size: 13px; display: flex; justify-content: space-between; margin-bottom: 5px; }
+    .bar-meta .name { font-weight: 600; }
+    .bar-meta .pct { color: var(--sub); }
+    .bar-track { background: var(--bg); border-radius: 99px; height: 10px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 1s cubic-bezier(0.16,1,0.3,1); }
+    .bar-fill.boy  { background: linear-gradient(90deg, #74b3e8, #5a9fd4); }
+    .bar-fill.girl { background: linear-gradient(90deg, #e89cbd, #d47fa6); }
+
+    /* Cards */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .prediction-card {
+      background: var(--card);
+      border-radius: 22px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      animation: fadeUp 0.4s ease both;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .prediction-card:hover {
+      box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+      transform: translateY(-2px);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .card-name { font-weight: 700; font-size: 16px; }
+    .card-date { font-size: 12px; color: var(--sub); margin-top: 2px; }
+
+    .gender-badge {
+      padding: 5px 13px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .badge-boy   { background: #e6f3fb; color: #4a8fc0; }
+    .badge-girl  { background: #fceef4; color: #c46a92; }
+    .badge-unknown { background: var(--bg); color: var(--sub); }
+
+    .details { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .detail-chip {
+      background: var(--bg);
+      border-radius: 99px;
+      padding: 5px 13px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+    }
+
+    .wish-text {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--sub);
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    /* Empty / loading */
+    .center {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--sub);
+      font-size: 15px;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .center .icon { font-size: 52px; margin-bottom: 12px; }
+
+    /* Loading dots */
+    .loading-dots::after {
+      content: '';
+      animation: dots 1.2s steps(4, end) infinite;
+    }
+
+    @keyframes dots {
+      0%  { content: ''; }
+      25% { content: '.'; }
+      50% { content: '..'; }
+      75% { content: '...'; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>Прогнозы 🔮</h1>
+      <div class="subtitle">малыш Насти и Лёши</div>
+    </div>
+    <div class="count-badge" id="count-badge">0</div>
+  </div>
+
+  <div class="container">
+    <div id="config-section" style="display:none" class="config-bar">
+      <b>🔒 Введи код доступа</b>
+      <small>Эта страница только для родителей</small>
+      <input type="password" id="pin-input" placeholder="Код" inputmode="numeric" maxlength="10" />
+      <button id="save-url-btn">Войти</button>
+    </div>
+
+    <div id="summary-section" style="display:none" class="summary">
+      <div class="stat-card">
+        <div class="stat-label">Прогнозов</div>
+        <div class="stat-value" id="total-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Голосование</div>
+        <div class="bar-row">
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="name">👦 Мальчик</span>
+              <span class="pct" id="boy-pct">0%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill boy" id="boy-bar"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-meta">
+              <span class="name">👧 Девочка</span>
+              <span class="pct" id="girl-pct">0%</span>
+            </div>
+            <div class="bar-track"><div class="bar-fill girl" id="girl-bar"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNZI1y71_atzHL5A5DXgJ5JS5yD2w8xc6tTzLpLPAwMpD6LqUACwn-JNTGJVlPdBF1/exec';
+    const CORRECT_PIN = '1488';
+    const AUTH_KEY = 'results_auth';
+
+    const isAuthed = () => sessionStorage.getItem(AUTH_KEY) === '1';
+
+    document.getElementById('save-url-btn').addEventListener('click', checkPin);
+    document.getElementById('pin-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPin(); });
+
+    function checkPin() {
+      const val = document.getElementById('pin-input').value.trim();
+      if (val !== CORRECT_PIN) {
+        const inp = document.getElementById('pin-input');
+        inp.style.borderColor = '#e8a0a0';
+        inp.value = '';
+        inp.placeholder = 'Неверный код, попробуй ещё раз';
+        setTimeout(() => { inp.style.borderColor = ''; inp.placeholder = 'Код'; }, 2000);
+        return;
+      }
+      sessionStorage.setItem(AUTH_KEY, '1');
+      document.getElementById('config-section').style.display = 'none';
+      loadData();
+    }
+
+    function formatSubmittedAt(iso) {
+      if (!iso) return '';
+      const d = new Date(iso);
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }
+
+    function formatBirthDate(str) {
+      if (!str) return '';
+      const s = String(str).trim();
+      // Если пришла просто YYYY-MM-DD — парсим как локальную дату
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+        const [y, mo, d] = s.split('-').map(Number);
+        return new Date(y, mo - 1, d).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      }
+      // Полная ISO-строка от Sheets (UTC) — toLocaleDateString сам учтёт часовой пояс
+      const d = new Date(s);
+      if (isNaN(d)) return str;
+      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    function formatTime(str) {
+      if (!str) return '';
+      const s = String(str).trim();
+      // После фикса скрипта приходит "HH:mm" — просто возвращаем
+      if (/^\d{2}:\d{2}/.test(s)) return s.slice(0, 5);
+      // Страховка: если вдруг пришёл ISO — берём локальное время браузера
+      const d = new Date(s);
+      if (isNaN(d)) return str;
+      return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    }
+
+    function renderCard(p, index) {
+      const badgeClass = p.gender === 'Мальчик' ? 'badge-boy' : p.gender === 'Девочка' ? 'badge-girl' : 'badge-unknown';
+
+      const chips = [
+        p.babyName   && `✏️ ${p.babyName}`,
+        p.birthDate  && `📅 ${formatBirthDate(p.birthDate)}`,
+        p.birthTime  && `🕐 ${formatTime(p.birthTime)}`,
+        p.weight     && `⚖️ ${p.weight} г`,
+        p.height     && `📏 ${p.height} см`,
+        p.eyes       && p.eyes,
+        p.hairColor  && p.hairColor,
+        p.hairAmount && p.hairAmount,
+        p.looksLike  && p.looksLike,
+      ].filter(Boolean);
+
+      return `
+        <div class="prediction-card" style="animation-delay:${index * 0.05}s">
+          <div class="card-header">
+            <div>
+              <div class="card-name">${p.name}</div>
+              <div class="card-date">${formatSubmittedAt(p.submittedAt)}</div>
+            </div>
+            <div class="gender-badge ${badgeClass}">${p.gender || '?'}</div>
+          </div>
+          ${chips.length ? `<div class="details">${chips.map(c => `<div class="detail-chip">${c}</div>`).join('')}</div>` : ''}
+          ${p.wish ? `<div class="wish-text">«${p.wish}»</div>` : ''}
+        </div>`;
+    }
+
+    function renderSummary(predictions) {
+      const total = predictions.length;
+      const boys  = predictions.filter(p => p.gender === 'Мальчик').length;
+      const girls = predictions.filter(p => p.gender === 'Девочка').length;
+
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('count-badge').textContent = total;
+      document.getElementById('count-badge').classList.add('show');
+
+      // Animate bars after a tick so CSS transition fires
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const boyPct  = total ? Math.round(boys  / total * 100) : 0;
+          const girlPct = total ? Math.round(girls / total * 100) : 0;
+          document.getElementById('boy-pct').textContent  = boyPct  + '%';
+          document.getElementById('girl-pct').textContent = girlPct + '%';
+          document.getElementById('boy-bar').style.width  = boyPct  + '%';
+          document.getElementById('girl-bar').style.width = girlPct + '%';
+        });
+      });
+
+      document.getElementById('summary-section').style.display = 'grid';
+    }
+
+    async function loadData() {
+      if (!isAuthed()) {
+        document.getElementById('config-section').style.display = 'block';
+        document.getElementById('list').innerHTML = `<div class="center"><div class="icon">🔒</div>Введи код доступа выше</div>`;
+        return;
+      }
+
+      document.getElementById('list').innerHTML = `<div class="center"><div class="icon">✨</div><span class="loading-dots">Загружаю</span></div>`;
+
+      try {
+        const res = await fetch(SCRIPT_URL + '?action=get');
+        const data = await res.json();
+        const predictions = data.predictions || [];
+
+        if (predictions.length === 0) {
+          document.getElementById('list').innerHTML = `<div class="center"><div class="icon">🌱</div>Пока нет прогнозов</div>`;
+          return;
+        }
+
+        renderSummary(predictions);
+        document.getElementById('list').innerHTML = predictions
+          .slice().reverse()
+          .map((p, i) => renderCard(p, i)).join('');
+      } catch (e) {
+        document.getElementById('list').innerHTML = `<div class="center"><div class="icon">😬</div>Ошибка загрузки.<br>Попробуй обновить страницу.</div>`;
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Прогноз малыша 👶</title>
+
+  <style>
+    :root {
+      --bg: #fdf6ee;
+      --card: #ffffff;
+      --text: #2b2b2b;
+      --sub: #9a918c;
+      --accent: #2b2b2b;
+      --border: #ecdfd3;
+      --input-bg: #faf6f1;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding-bottom: 48px;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(253,246,238,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .back-btn {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      width: 36px; height: 36px;
+      font-size: 17px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+    .back-btn:active { background: var(--border); }
+
+    .header-title { font-size: 16px; font-weight: 700; }
+
+    /* Sections */
+    .container {
+      padding: 16px 16px 0;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background: var(--card);
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section:nth-child(1) { animation-delay: 0.05s; }
+    .section:nth-child(2) { animation-delay: 0.10s; }
+    .section:nth-child(3) { animation-delay: 0.15s; }
+    .section:nth-child(4) { animation-delay: 0.20s; }
+    .section:nth-child(5) { animation-delay: 0.25s; }
+    .section:nth-child(6) { animation-delay: 0.30s; }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 14px;
+    }
+
+    .field { margin-bottom: 12px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    textarea {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      font-size: 15px;
+      background: var(--input-bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #c8b9a8;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(180,155,130,0.12);
+    }
+
+    textarea { resize: none; height: 88px; }
+
+    /* Pills */
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .pill {
+      padding: 9px 15px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      font-size: 14px;
+      cursor: pointer;
+      background: var(--input-bg);
+      font-family: inherit;
+      color: var(--text);
+      transition: all 0.18s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .pill:hover { border-color: #c8b9a8; transform: scale(1.04); }
+
+    .pill.selected {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+      transform: scale(1.06);
+      box-shadow: 0 3px 10px rgba(43,43,43,0.2);
+    }
+
+    /* Gender buttons */
+    .gender-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .gender-btn {
+      padding: 22px 12px;
+      border-radius: 18px;
+      border: 2px solid var(--border);
+      font-size: 32px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--input-bg);
+      width: 100%;
+      font-family: inherit;
+      transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .gender-btn span {
+      display: block;
+      font-size: 13px;
+      margin-top: 6px;
+      color: var(--sub);
+      font-weight: 600;
+    }
+
+    .gender-btn:hover { transform: scale(1.03); }
+
+    .gender-btn.selected-boy {
+      border-color: #5a9fd4;
+      background: #eef5fb;
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(90,159,212,0.2);
+    }
+
+    .gender-btn.selected-girl {
+      border-color: #d47fa6;
+      background: #fceef4;
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(212,127,166,0.2);
+    }
+
+    /* Two columns */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .two-col-date { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 480px) { .two-col-date { grid-template-columns: 1fr; } }
+
+    .input-unit { position: relative; }
+    .input-unit input { padding-right: 42px; }
+    .unit {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--sub);
+      pointer-events: none;
+    }
+
+    /* Random name button */
+    .name-row { display: flex; gap: 8px; align-items: center; }
+    .name-row input { flex: 1; margin: 0; }
+
+    .dice-btn {
+      flex-shrink: 0;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border);
+      background: var(--input-bg);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    .dice-btn:hover { background: #fff; border-color: #c8b9a8; }
+    .dice-btn.spin { animation: diceSpin 0.35s ease; }
+
+    @keyframes diceSpin {
+      0%   { transform: rotate(0deg) scale(1); }
+      40%  { transform: rotate(180deg) scale(1.2); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* Submit */
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 18px;
+      background: var(--accent);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 4px;
+      font-family: inherit;
+      box-shadow: 0 6px 20px rgba(43,43,43,0.22);
+      transition: transform 0.15s, box-shadow 0.15s;
+      animation: fadeUp 0.4s 0.35s ease both;
+    }
+
+    .submit-btn:hover { box-shadow: 0 8px 24px rgba(43,43,43,0.3); }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* Success */
+    .success {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .success.show {
+      display: flex;
+      animation: fadeUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    .success-emoji {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: pop 0.6s 0.1s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+
+    .success h2 { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+    .success p  { color: var(--sub); font-size: 16px; line-height: 1.5; }
+
+    .confetti-row {
+      font-size: 32px;
+      margin-top: 24px;
+      animation: wiggle 1s 0.5s ease both;
+    }
+
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-10deg); }
+      75%      { transform: rotate(10deg); }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="form-view">
+    <div class="header">
+      <button class="back-btn" onclick="history.back()">←</button>
+      <div class="header-title">Твой прогноз 🔮</div>
+    </div>
+
+    <div class="container">
+
+      <div class="section">
+        <div class="section-title">Кто родится?</div>
+        <div class="gender-row">
+          <button class="gender-btn" id="btn-boy" type="button">
+            👦 <span>Мальчик</span>
+          </button>
+          <button class="gender-btn" id="btn-girl" type="button">
+            👧 <span>Девочка</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Как назовут?</div>
+        <div class="field">
+          <label>Имя малыша</label>
+          <div class="name-row">
+            <input type="text" id="baby-name" placeholder="Например, Лёва или Маша" />
+            <button type="button" id="random-name-btn" class="dice-btn" title="Случайное имя">🎲</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Когда родится?</div>
+        <div class="two-col-date">
+          <div class="field">
+            <label>Дата</label>
+            <input type="date" id="birth-date" />
+          </div>
+          <div class="field">
+            <label>Время</label>
+            <input type="time" id="birth-time" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Размеры</div>
+        <div class="two-col">
+          <div class="field">
+            <label>Вес</label>
+            <div class="input-unit">
+              <input type="number" id="weight" placeholder="3500" step="50" min="1000" max="6000" />
+              <span class="unit">г</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>Рост</label>
+            <div class="input-unit">
+              <input type="number" id="height" placeholder="51" step="1" min="30" max="70" />
+              <span class="unit">см</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Внешность</div>
+
+        <div class="field">
+          <label>Цвет глаз</label>
+          <div class="pills" id="eyes">
+            <button class="pill" type="button">🔵 Голубые</button>
+            <button class="pill" type="button">🟢 Зелёные</button>
+            <button class="pill" type="button">🟤 Карие</button>
+            <button class="pill" type="button">⚫ Тёмные</button>
+            <button class="pill" type="button">🩶 Серые</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Цвет волос</label>
+          <div class="pills" id="hair-color">
+            <button class="pill" type="button">👱 Светлые</button>
+            <button class="pill" type="button">🟫 Русые</button>
+            <button class="pill" type="button">🟤 Тёмные</button>
+            <button class="pill" type="button">🖤 Чёрные</button>
+            <button class="pill" type="button">🔴 Рыжие</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Количество волос</label>
+          <div class="pills" id="hair-amount">
+            <button class="pill" type="button">🪄 Много</button>
+            <button class="pill" type="button">🌿 Немного</button>
+            <button class="pill" type="button">✨ Лысый</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>На кого будет похож?</label>
+          <div class="pills" id="looks-like">
+            <button class="pill" type="button">👩 На маму</button>
+            <button class="pill" type="button">👨 На папу</button>
+            <button class="pill" type="button">👨‍👩‍👧 На обоих</button>
+            <button class="pill" type="button">🤷 Своё лицо</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Пожелание</div>
+        <div class="field">
+          <textarea id="wish" placeholder="Напиши что-нибудь тёплое для малыша или родителей 💛"></textarea>
+        </div>
+      </div>
+
+      <button class="submit-btn" id="submit-btn">Отправить прогноз 🚀</button>
+    </div>
+  </div>
+
+  <div class="success" id="success-view">
+    <div class="success-emoji">🎉</div>
+    <h2>Прогноз отправлен!</h2>
+    <p>Скоро узнаем,<br>кто оказался ближе всех 😄</p>
+    <div class="confetti-row">🌟 👶 🌟</div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzNZI1y71_atzHL5A5DXgJ5JS5yD2w8xc6tTzLpLPAwMpD6LqUACwn-JNTGJVlPdBF1/exec';
+
+    const NAMES = {
+      boy:  ['Александр','Алексей','Андрей','Артём','Борис','Василий','Виктор','Владимир','Глеб','Григорий','Даниил','Денис','Дмитрий','Егор','Иван','Илья','Кирилл','Константин','Лев','Максим','Матвей','Михаил','Никита','Николай','Павел','Пётр','Роман','Сергей','Степан','Тимофей','Фёдор','Филипп','Ярослав'],
+      girl: ['Александра','Алина','Алиса','Анастасия','Анна','Валерия','Варвара','Вера','Виктория','Дарья','Диана','Екатерина','Елена','Елизавета','Ирина','Карина','Ксения','Маргарита','Марина','Мария','Милана','Надежда','Наталья','Николь','Полина','София','Татьяна','Ульяна','Юлия'],
+    };
+
+    const state = { gender: '', eyes: '', 'hair-color': '', 'hair-amount': '', 'looks-like': '' };
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!user.name) window.location.href = 'index.html';
+
+    const today = new Date();
+    const localDate = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+    document.getElementById('birth-date').min = localDate;
+
+    document.getElementById('btn-boy').addEventListener('click', () => selectGender('boy'));
+    document.getElementById('btn-girl').addEventListener('click', () => selectGender('girl'));
+
+    function selectGender(g) {
+      state.gender = g;
+      document.getElementById('btn-boy').className = 'gender-btn' + (g === 'boy' ? ' selected-boy' : '');
+      document.getElementById('btn-girl').className = 'gender-btn' + (g === 'girl' ? ' selected-girl' : '');
+    }
+
+    ['eyes', 'hair-color', 'hair-amount', 'looks-like'].forEach(group => {
+      document.querySelectorAll('#' + group + ' .pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('#' + group + ' .pill').forEach(p => p.classList.remove('selected'));
+          btn.classList.add('selected');
+          state[group] = btn.textContent.trim();
+        });
+      });
+    });
+
+    const diceBtn = document.getElementById('random-name-btn');
+    diceBtn.addEventListener('click', () => {
+      const pool = state.gender === 'girl' ? NAMES.girl : state.gender === 'boy' ? NAMES.boy : [...NAMES.boy, ...NAMES.girl];
+      document.getElementById('baby-name').value = pool[Math.floor(Math.random() * pool.length)];
+      diceBtn.classList.remove('spin');
+      void diceBtn.offsetWidth;
+      diceBtn.classList.add('spin');
+    });
+
+    document.getElementById('submit-btn').addEventListener('click', submitForm);
+
+    async function submitForm() {
+      const btn = document.getElementById('submit-btn');
+      btn.disabled = true;
+      btn.textContent = 'Отправляем...';
+
+      const data = {
+        name: user.name,
+        email: user.email || '',
+        gender: state.gender === 'boy' ? 'Мальчик' : state.gender === 'girl' ? 'Девочка' : '',
+        babyName: document.getElementById('baby-name').value.trim(),
+        birthDate: document.getElementById('birth-date').value,
+        birthTime: document.getElementById('birth-time').value,
+        weight: document.getElementById('weight').value,
+        height: document.getElementById('height').value,
+        eyes: state['eyes'],
+        hairColor: state['hair-color'],
+        hairAmount: state['hair-amount'],
+        looksLike: state['looks-like'],
+        wish: document.getElementById('wish').value.trim(),
+        submittedAt: new Date().toISOString(),
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+      } catch (e) {}
+
+      document.getElementById('form-view').style.display = 'none';
+      document.getElementById('success-view').classList.add('show');
+      localStorage.removeItem('user');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <title>Прогноз малыша 👶</title>
+
+  <style>
+    :root {
+      --bg: #fdf6ee;
+      --card: #ffffff;
+      --text: #2b2b2b;
+      --sub: #9a918c;
+      --accent: #2b2b2b;
+      --border: #ecdfd3;
+      --pink: #f2a7c3;
+      --blue: #90c4e8;
+      --yellow: #f7d87c;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      overflow: hidden;
+    }
+
+    /* Floating background shapes */
+    .bg-shape {
+      position: fixed;
+      border-radius: 50%;
+      opacity: 0.18;
+      pointer-events: none;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0%   { transform: translateY(0) rotate(0deg); }
+      50%  { transform: translateY(-30px) rotate(180deg); }
+      100% { transform: translateY(0) rotate(360deg); }
+    }
+
+    .card {
+      background: var(--card);
+      padding: 32px 28px 28px;
+      border-radius: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+      width: 100%;
+      max-width: 380px;
+      animation: slideUp 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(32px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .emoji-header {
+      text-align: center;
+      font-size: 52px;
+      margin-bottom: 4px;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    .parents {
+      text-align: center;
+      font-size: 13px;
+      color: var(--sub);
+      margin-bottom: 20px;
+      letter-spacing: 0.2px;
+    }
+
+    .parents strong { color: var(--text); }
+
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 14px;
+      color: var(--sub);
+      margin-bottom: 24px;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    input {
+      width: 100%;
+      padding: 15px 15px 15px 42px;
+      border-radius: 16px;
+      border: 1.5px solid var(--border);
+      font-size: 16px;
+      background: #faf6f1;
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #c8b9a8;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(180,155,130,0.12);
+    }
+
+    button.primary {
+      width: 100%;
+      padding: 17px;
+      border: none;
+      border-radius: 16px;
+      background: var(--accent);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 4px;
+      font-family: inherit;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(43,43,43,0.2);
+    }
+
+    button.primary:hover { box-shadow: 0 6px 20px rgba(43,43,43,0.28); }
+    button.primary:active { transform: scale(0.97); }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--sub);
+      margin-top: 16px;
+    }
+
+    /* Confetti dots */
+    .dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: dotFloat 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes dotFloat {
+      0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+      10%  { opacity: 0.7; transform: translateY(80vh) scale(1); }
+      90%  { opacity: 0.5; }
+      100% { opacity: 0; transform: translateY(-10vh) scale(0.5); }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <div class="emoji-header">🤰</div>
+    <div class="parents">малыш <strong>Насти и Лёши</strong> скоро появится на свет</div>
+    <h1>Угадай всё про малыша!</h1>
+    <p class="sub">Оставь свой прогноз — посмотрим, кто окажется прав 🔮</p>
+
+    <div class="input-wrap">
+      <span class="icon">👤</span>
+      <input id="name" type="text" placeholder="Твоё имя" autocomplete="given-name" />
+    </div>
+    <div class="input-wrap">
+      <span class="icon">✉️</span>
+      <input id="email" type="email" placeholder="Email (необязательно)" autocomplete="email" />
+    </div>
+
+    <button class="primary" id="start-btn">Сделать прогноз →</button>
+
+    <div class="footer">Просто ради веселья 💛</div>
+  </div>
+
+  <script>
+    // Floating dots
+    const colors = ['#f2a7c3','#90c4e8','#f7d87c','#b5d9a8','#d4b8f0'];
+    for (let i = 0; i < 18; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot';
+      d.style.cssText = `
+        left: ${Math.random()*100}%;
+        width: ${6 + Math.random()*8}px;
+        height: ${6 + Math.random()*8}px;
+        background: ${colors[Math.floor(Math.random()*colors.length)]};
+        animation-delay: ${Math.random()*6}s;
+        animation-duration: ${5 + Math.random()*5}s;
+      `;
+      document.body.appendChild(d);
+    }
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      if (!name) {
+        document.getElementById('name').focus();
+        document.getElementById('name').style.borderColor = '#e8a0a0';
+        setTimeout(() => document.getElementById('name').style.borderColor = '', 1200);
+        return;
+      }
+      localStorage.setItem('user', JSON.stringify({ name, email }));
+      document.querySelector('.card').style.animation = 'slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1) reverse both';
+      setTimeout(() => window.location.href = 'predict.html', 300);
+    });
+
+    document.getElementById('name').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('start-btn').click();
+    });
+  </script>
+</body>
+</html>

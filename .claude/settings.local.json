@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xxd)",
+      "Bash(python3 -)",
+      "Read(//private/tmp/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(pdftotext '/Users/grnfox/Downloads/Telegram Desktop/Инструкция по КВН.pdf' -)",
+      "Bash(pip3 install *)",
+      "Bash(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 root@195.133.39.254 \"echo connected\")",
+      "Bash(brew install *)",
+      "Bash(sshpass -p 'EuTOsgPqX' ssh -o StrictHostKeyChecking=no root@195.133.39.254 \"echo connected && uname -a\")",
+      "Bash(curl -sk -v -c /tmp/xui_cookies.txt https://195.133.39.254:26210/nKpRVKaBQX6Iq9jdJ7/login -H 'Content-Type: application/json' -d '{\"username\":\"bGREENB55Z\",\"password\":\"7hqpCEdD7n\"}')"
+    ]
+  }
+}

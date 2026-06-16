@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-rose: #f43f5e;
+  --color-peach: #fde8d8;
+  --color-cream: #fdf6ec;
+}
+
+body {
+  background-color: var(--color-cream);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+.font-serif { font-family: 'Playfair Display', Georgia, serif; }
+
+/* Decorative hearts background */
+.hearts-bg::before {
+  content: '💗';
+  position: fixed;
+  font-size: 6rem;
+  opacity: 0.03;
+  top: 10%;
+  left: 5%;
+  pointer-events: none;
+  z-index: 0;
+}
