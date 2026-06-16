@@ -52,10 +52,12 @@ export default function InvitePage() {
             <motion.button
               whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
               onClick={handleYes}
-              style={{ fontSize: `${screen.yesSize}rem`, padding: `${screen.yesSize}rem ${screen.yesSize * 2}rem` }}
+              style={{
+                background: 'linear-gradient(135deg, #f43f5e, #fb7185)',
+                fontSize: `${Math.min(screen.yesSize, 1.4)}rem`,
+                padding: `${0.8 * screen.yesSize}rem ${1.6 * screen.yesSize}rem`,
+              }}
               className="rounded-2xl text-white font-bold shadow-xl transition-all duration-300"
-              style2={{ background: 'linear-gradient(135deg, #f43f5e, #fb7185)' }}
-              {...{ style: { background: 'linear-gradient(135deg, #f43f5e, #fb7185)', fontSize: `${Math.min(screen.yesSize, 1.4)}rem`, padding: `${0.8 * screen.yesSize}rem ${1.6 * screen.yesSize}rem` } }}
             >
               Да 💖
             </motion.button>
