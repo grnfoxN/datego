@@ -73,10 +73,20 @@ def telegram_confirm(token: str, telegram_id: int, chat_id: int, name: str, user
     return {"ok": True}
 
 
+_BOT_USERNAME_CACHE: str = ""
+
+
 def _get_bot_username() -> str:
+    global _BOT_USERNAME_CACHE
+    if _BOT_USERNAME_CACHE:
+        return _BOT_USERNAME_CACHE
     import httpx
     try:
-        r = httpx.get(f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/getMe", timeout=5)
-        return r.json()["result"]["username"]
+        r = httpx.get(
+            f"https://api.telegram.org/bot{settings.TELEGRAM_BOT_TOKEN}/getMe",
+            timeout=5,
+        )
+        _BOT_USERNAME_CACHE = r.json()["result"]["username"]
+        return _BOT_USERNAME_CACHE
     except Exception:
-        return "datego_bot"
+        return "DateGo_bot"

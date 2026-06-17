@@ -11,7 +11,16 @@ export default function TelegramAuthPage() {
   const router = useRouter()
 
   useEffect(() => {
+    const saved = localStorage.getItem('tg_auth_token')
+    const savedUrl = localStorage.getItem('tg_auth_bot_url')
+    if (saved && savedUrl) {
+      setToken(saved)
+      setBotUrl(savedUrl)
+      return
+    }
     api.post('/api/auth/telegram/init').then(r => {
+      localStorage.setItem('tg_auth_token', r.data.token)
+      localStorage.setItem('tg_auth_bot_url', r.data.bot_url)
       setBotUrl(r.data.bot_url)
       setToken(r.data.token)
     })
@@ -25,6 +34,8 @@ export default function TelegramAuthPage() {
         const r = await api.get(`/api/auth/telegram/status?token=${token}`)
         if (r.data.confirmed) {
           localStorage.setItem('access_token', r.data.access_token)
+          localStorage.removeItem('tg_auth_token')
+          localStorage.removeItem('tg_auth_bot_url')
           clearInterval(interval)
           router.push('/dashboard')
         }
