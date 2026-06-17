@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://176.123.164.182'
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://195.133.39.254'
 
 const api = axios.create({ baseURL: API_URL })
 
