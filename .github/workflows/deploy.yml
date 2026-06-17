@@ -2,15 +2,13 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to VM
+      - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -18,24 +16,20 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd /var/www/datego
-            git pull origin main
+            git pull origin master
 
             # Backend
-            cd /var/www/datego/backend
-            source venv/bin/activate
-            pip install -r requirements.txt -q
-            alembic upgrade head
-            sudo systemctl restart datego-backend
+            /var/www/datego/backend/venv/bin/pip install -r /var/www/datego/backend/requirements.txt -q
+            /var/www/datego/backend/venv/bin/alembic -c /var/www/datego/backend/alembic.ini upgrade head
+            systemctl restart datego-backend
 
             # Bot
-            cd /var/www/datego/bot
-            source venv/bin/activate
-            pip install -r requirements.txt -q
-            sudo systemctl restart datego-bot
+            /var/www/datego/bot/venv/bin/pip install aiogram==3.15.0 httpx aiohttp -q
+            systemctl restart datego-bot
 
             # Frontend
             cd /var/www/datego/frontend
             npm install --legacy-peer-deps
-            npm run build
-            pm2 restart datego-frontend || pm2 start ecosystem.config.js
+            NEXT_PUBLIC_API_URL=https://datego.pro npm run build
+            pm2 restart datego-frontend
             pm2 save
